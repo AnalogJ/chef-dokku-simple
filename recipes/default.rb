@@ -27,13 +27,13 @@ bash 'dokku-bootstrap' do
 end
 
 ## loop through users adding all their keys from data_bag users
-node[:dokku][:ssh_users].each do |user|
-  keys = data_bag_item('users', user).fetch('ssh_keys', [])
-  Array(keys).each_with_index do |key, index|
-    bash 'sshcommand-acl-add' do
-      cwd root
-      code "echo '#{key}' | sshcommand acl-add dokku #{user}-#{index}"
-    end
+node[:dokku][:ssh_keys].each do |user, key|
+  # TODO make this into an LWRP
+  bash "sshcommand_acl-add_key" do
+    cwd node['dokku']['root']
+    code <<-EOT
+      echo '#{key}' | sshcommand acl-add dokku #{user}
+    EOT
   end
 end
 

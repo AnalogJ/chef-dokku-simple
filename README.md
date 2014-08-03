@@ -15,18 +15,10 @@ Attribute | Description | Type | Default
 ----------|-------------|------|--------
 `[:dokku][:tag]` | git tag to install | String | `v0.2.2`
 `[:dokku][:root]` | home dir for dokku | String | `/home/dokku`
-`[:dokku][:ssh_users]` | array of usernames to lookup ssh keys in data bag `users` (see below) | Array | []
+`[:dokku][:ssh_keys]` | hash of usernames - ssh key pairs | Hash | {}
 `[:dokku][:vhost]` | domain for virtual hosting | String | nil
 `[:dokku][:apps]` | hash of apps to configure with env vars | Hash | {}
 `[:dokku][:plugins]` | hash of plugin `name: repo url` to install | Hash | {}
-
-## SSH keys
-
-You need to add ssh keys that may `git push` apps to your dokku
-instance. This cookbook looks up `ssh_keys` as a string or array (of
-multiple keys) for each configured user in the data bag `users`. This
-is for compatibility with the
-[ssh-keys cookbook](https://github.com/nickola/chef-ssh-keys).
 
 ## Domain
 
@@ -48,7 +40,10 @@ Just include `dokku-simple` in your node's `run_list`:
   "dokku": {
     "tag": "v0.2.2",
     "root": "/home/dokku",
-    "ssh_users": [ "lindsey", "jeff" ],
+    "ssh_keys": {
+                  'awesome_user' => 'awesome_users_pubkey',
+                  'superb_user' => 'superb_users_pubkey'
+                },
     "vhost": "dokku.me",
     "apps": {
       "my_app": {
